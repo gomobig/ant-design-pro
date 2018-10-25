@@ -2,7 +2,6 @@ import fetch from 'dva/fetch';
 import { notification } from 'antd';
 import router from 'umi/router';
 import hash from 'hash.js';
-import { isAntdPro } from './utils';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -63,12 +62,9 @@ const cachedSave = (response, hashcode) => {
  * @param  {object} [option] The options we want to pass to "fetch"
  * @return {object}           An object containing either "data" or "err"
  */
-export default function request(
-  url,
-  option,
-) {
+export default function request(url, option) {
   const options = {
-    expirys: isAntdPro(),
+    expirys: false,
     ...option,
   };
   /**

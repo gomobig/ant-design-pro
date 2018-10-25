@@ -1,29 +1,37 @@
 import { routerRedux } from 'dva/router';
-import { stringify } from 'qs';
-import { fakeAccountLogin, getFakeCaptcha } from '@/services/api';
+import router from 'umi/router';
+import { parse, stringify } from 'qs';
+import { login, logout } from '@/services/wkapi';
 import { setAuthority } from '@/utils/authority';
-import { getPageQuery } from '@/utils/utils';
+import { setStorage } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
+import jumpMap from '../../config/router.redirect';
 
 export default {
   namespace: 'login',
-
   state: {
-    status: undefined,
+    errMsg: '',
+    status: 0,
   },
 
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
+      const response = yield call(login, payload);
+      setStorage('userName', payload.userName);
+      setStorage('role', payload.role);
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       });
       // Login successfully
-      if (response.status === 'ok') {
+      if (response.err === 0) {
+        setAuthority(payload.role);
         reloadAuthorized();
+        console.log('----jump', jumpMap[payload.role]);
+        // yield put(routerRedux.push(jumpMap[payload.role]))
         const urlParams = new URL(window.location.href);
-        const params = getPageQuery();
+        const params = parse(window.location.href.split('?')[1]);
+        console.log('login', params);
         let { redirect } = params;
         if (redirect) {
           const redirectUrlParams = new URL(redirect);
@@ -33,16 +41,14 @@ export default {
               redirect = redirect.substr(2);
             }
           } else {
+            console.log('window-redirect', redirect);
             window.location.href = redirect;
             return;
           }
         }
-        yield put(routerRedux.replace(redirect || '/'));
+        console.log('redirect', redirect);
+        yield put(routerRedux.replace(jumpMap[payload.role] || '/'));
       }
-    },
-
-    *getCaptcha({ payload }, { call }) {
-      yield call(getFakeCaptcha, payload);
     },
 
     *logout(_, { put }) {
@@ -70,8 +76,7 @@ export default {
       setAuthority(payload.currentAuthority);
       return {
         ...state,
-        status: payload.status,
-        type: payload.type,
+        status: payload.err,
       };
     },
   },

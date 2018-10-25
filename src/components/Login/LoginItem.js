@@ -1,48 +1,13 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Row, Col } from 'antd';
-import omit from 'omit.js';
-import styles from './index.less';
+import { Form, Input, Select } from 'antd';
+import { FormattedMessage } from 'umi/locale';
 import ItemMap from './map';
 import LoginContext from './loginContext';
 
+const { Option } = Select;
 const FormItem = Form.Item;
 
 class WrapFormItem extends Component {
-  static defaultProps = {
-    buttonText: '获取验证码',
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      count: 0,
-    };
-  }
-
-  componentDidMount() {
-    const { updateActive, name } = this.props;
-    if (updateActive) {
-      updateActive(name);
-    }
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  onGetCaptcha = () => {
-    const { onGetCaptcha } = this.props;
-    const result = onGetCaptcha ? onGetCaptcha() : null;
-    if (result === false) {
-      return;
-    }
-    if (result instanceof Promise) {
-      result.then(this.runGetCaptchaCountDown);
-    } else {
-      this.runGetCaptchaCountDown();
-    }
-  };
-
   getFormItemOptions = ({ onChange, defaultValue, customprops, rules }) => {
     const options = {
       rules: rules || customprops.rules,
@@ -56,62 +21,34 @@ class WrapFormItem extends Component {
     return options;
   };
 
-  runGetCaptchaCountDown = () => {
-    const { countDown } = this.props;
-    let count = countDown || 59;
-    this.setState({ count });
-    this.interval = setInterval(() => {
-      count -= 1;
-      this.setState({ count });
-      if (count === 0) {
-        clearInterval(this.interval);
-      }
-    }, 1000);
-  };
-
   render() {
-    const { count } = this.state;
-
     const {
       form: { getFieldDecorator },
     } = this.props;
 
     // 这么写是为了防止restProps中 带入 onChange, defaultValue, rules props
-    const {
-      onChange,
-      customprops,
-      defaultValue,
-      rules,
-      name,
-      buttonText,
-      updateActive,
-      type,
-      ...restProps
-    } = this.props;
+    /* eslint no-unused-vars: "off" */
+    const { onChange, customprops, defaultValue, rules, name, type, ...restProps } = this.props;
 
     // get getFieldDecorator props
     const options = this.getFormItemOptions(this.props);
-
     const otherProps = restProps || {};
-    if (type === 'Captcha') {
-      const inputProps = omit(otherProps, ['onGetCaptcha', 'countDown']);
+    if (type === 'Role') {
       return (
         <FormItem>
-          <Row gutter={8}>
-            <Col span={16}>
-              {getFieldDecorator(name, options)(<Input {...customprops} {...inputProps} />)}
-            </Col>
-            <Col span={8}>
-              <Button
-                disabled={count}
-                className={styles.getCaptcha}
-                size="large"
-                onClick={this.onGetCaptcha}
-              >
-                {count ? `${count} s` : buttonText}
-              </Button>
-            </Col>
-          </Row>
+          {getFieldDecorator(name, options)(
+            <Select {...customprops} {...otherProps}>
+              <Option value="SystemAdmin">
+                <FormattedMessage id="user.role.system-admin" />
+              </Option>
+              <Option value="UserAdmin">
+                <FormattedMessage id="user.role.user-admin" />
+              </Option>
+              <Option value="Monitor">
+                <FormattedMessage id="user.role.monitor" />
+              </Option>
+            </Select>
+          )}
         </FormItem>
       );
     }
@@ -134,7 +71,6 @@ Object.keys(ItemMap).forEach(key => {
           rules={item.rules}
           {...props}
           type={key}
-          updateActive={context.updateActive}
           form={context.form}
         />
       )}

@@ -1,62 +1,38 @@
-import React from 'react';
-import { Icon } from 'antd';
-import styles from './index.less';
+import { formatMessage } from 'umi/locale';
 
 export default {
   UserName: {
     props: {
       size: 'large',
-      prefix: <Icon type="user" className={styles.prefixIcon} />,
-      placeholder: 'admin',
     },
     rules: [
       {
         required: true,
-        message: 'Please enter username!',
+        message: formatMessage({ id: 'login.rule.account' }),
       },
     ],
   },
   Password: {
     props: {
       size: 'large',
-      prefix: <Icon type="lock" className={styles.prefixIcon} />,
       type: 'password',
-      placeholder: '888888',
     },
     rules: [
       {
         required: true,
-        message: 'Please enter password!',
+        message: formatMessage({ id: 'login.rule.password' }),
       },
     ],
   },
-  Mobile: {
+  Role: {
     props: {
       size: 'large',
-      prefix: <Icon type="mobile" className={styles.prefixIcon} />,
-      placeholder: 'mobile number',
+      type: 'Role',
     },
     rules: [
       {
         required: true,
-        message: 'Please enter mobile number!',
-      },
-      {
-        pattern: /^1\d{10}$/,
-        message: 'Wrong mobile number format!',
-      },
-    ],
-  },
-  Captcha: {
-    props: {
-      size: 'large',
-      prefix: <Icon type="mail" className={styles.prefixIcon} />,
-      placeholder: 'captcha',
-    },
-    rules: [
-      {
-        required: true,
-        message: 'Please enter Captcha!',
+        message: formatMessage({ id: 'login.rule.role' }),
       },
     ],
   },
