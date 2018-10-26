@@ -13,9 +13,16 @@ const { UserName, Password, Submit, Role } = Login;
   submitting: loading.effects['login/login'],
 }))
 class LoginPage extends Component {
-  clearMsg = () => {};
+  clearMsg = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'login/showErrorMsg',
+      payload: '',
+    });
+  };
 
   handleSubmit = (err, values) => {
+    this.clearMsg();
     if (!err) {
       const { dispatch } = this.props;
       dispatch({
@@ -32,8 +39,7 @@ class LoginPage extends Component {
   );
 
   render() {
-    const { login, submitting, errMsg } = this.props;
-    // const { errMsg } = this.state;
+    const { submitting, login: { errMsg } } = this.props;
     return (
       <div className={styles.main}>
         <Login
@@ -42,10 +48,14 @@ class LoginPage extends Component {
             this.loginForm = form;
           }}
         >
-          <UserName name="userName" placeholder={formatMessage({ id: 'account' })} />
+          <UserName
+            name="userName"
+            placeholder={formatMessage({ id: 'account' })}
+            onChange={this.clearMsg}
+          />
           <Role
             name="role"
-            defaultValue={getStorage('role') ? getStorage('role').result : ''}
+            defaultValue={window.localStorage.getItem('role')}
             placeholder={formatMessage({ id: 'login.role' })}
             optionFilterProp="children"
             onChange={this.clearMsg}
@@ -56,9 +66,10 @@ class LoginPage extends Component {
           <Password
             name="password"
             placeholder={formatMessage({ id: 'password' })}
+            onChange={this.clearMsg}
             onPressEnter={() => this.loginForm.validateFields(this.handleSubmit)}
           />
-          {login.status !== 0 && !login.submitting && errMsg !== '' && this.renderMessage(errMsg)}
+          {!submitting && !!errMsg && this.renderMessage(errMsg)}
           <Submit loading={submitting}>
             <FormattedMessage id="app.login.login" />
           </Submit>

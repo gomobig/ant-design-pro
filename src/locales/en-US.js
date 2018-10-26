@@ -7,8 +7,10 @@ export default {
   'layout.user.link.help': 'Help',
   'layout.user.link.privacy': 'Privacy',
   'layout.user.link.terms': 'Terms',
-  password: 'password',
-  account: 'account',
+  'password': 'password',
+  'account': 'account',
+  'company.name': '221 data service',
+  'project.name': 'Intelligent Security',
   'login.role': 'role',
   'login.rule.account': 'Please enter your account!',
   'login.rule.password': 'Please enter your password!',
@@ -16,6 +18,9 @@ export default {
   'user.role.system-admin': 'System',
   'user.role.user-admin': 'UserManager',
   'user.role.monitor': 'Monitor',
+  'menu': 'menu',
+
+  'menu.account.change-password': 'Change Password',
 
   'validation.email.required': 'Please enter your email!',
   'validation.email.wrong-format': 'The email address is in the wrong format!',

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { formatMessage } from 'umi/locale';
-import { Layout, message } from 'antd';
+import { Layout, message, Modal } from 'antd';
 import Animate from 'rc-animate';
 import { connect } from 'dva';
 import router from 'umi/router';
@@ -42,41 +42,23 @@ class HeaderView extends PureComponent {
     return collapsed ? 'calc(100% - 80px)' : 'calc(100% - 256px)';
   };
 
-  handleNoticeClear = type => {
-    message.success(`${formatMessage({ id: 'component.noticeIcon.cleared' })} ${formatMessage({ id: `component.globalHeader.${type}` })}`);
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'global/clearNotices',
-      payload: type,
-    });
+  // todo 路由至报警页面
+  handleNoticeClick = () => {
+    message.success(`todo路由至指定页面`);
   };
 
   handleMenuClick = ({ key }) => {
     const { dispatch } = this.props;
-    if (key === 'userCenter') {
-      router.push('/account/center');
-      return;
-    }
-    if (key === 'triggerError') {
-      router.push('/exception/trigger');
-      return;
-    }
-    if (key === 'userinfo') {
-      router.push('/account/settings/base');
+    if (key === 'changePassword') {
+      Modal.info({
+        title: '准备修改密码',
+        content: `This is a test modal content.`,
+      });
       return;
     }
     if (key === 'logout') {
       dispatch({
         type: 'login/logout',
-      });
-    }
-  };
-
-  handleNoticeVisibleChange = visible => {
-    if (visible) {
-      const { dispatch } = this.props;
-      dispatch({
-        type: 'global/fetchNotices',
       });
     }
   };
@@ -128,17 +110,15 @@ class HeaderView extends PureComponent {
             mode="horizontal"
             Authorized={Authorized}
             onCollapse={handleMenuCollapse}
-            onNoticeClear={this.handleNoticeClear}
+            onNoticeClick={this.handleNoticeClick}
             onMenuClick={this.handleMenuClick}
-            onNoticeVisibleChange={this.handleNoticeVisibleChange}
             {...this.props}
           />
         ) : (
           <GlobalHeader
             onCollapse={handleMenuCollapse}
-            onNoticeClear={this.handleNoticeClear}
+            onNoticeClick={this.handleNoticeClick}
             onMenuClick={this.handleMenuClick}
-            onNoticeVisibleChange={this.handleNoticeVisibleChange}
             {...this.props}
           />
         )}

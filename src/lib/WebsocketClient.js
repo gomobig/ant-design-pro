@@ -1,5 +1,5 @@
 // 远程服务配置
-import frameworkConfig from '../../../smartpark/client/web/src/config.js';
+import frameworkConfig from '../config';
 
 // 以下的代码和 ../framework/libraries/websocket/WebsocketClient.js 保持一致
 function WebsocketClient(wsdomain, project) {

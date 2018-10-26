@@ -1,4 +1,5 @@
 import { query as queryUsers, queryCurrent } from '@/services/user';
+import { getStorage } from '@/utils/utils';
 
 export default {
   namespace: 'user',
@@ -16,11 +17,14 @@ export default {
         payload: response,
       });
     },
-    *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
+    *fetchCurrent(_, { put }) {
       yield put({
         type: 'saveCurrentUser',
-        payload: response,
+        payload: {
+          name: window.localStorage.getItem('username'),
+          role: window.localStorage.getItem('role'),
+          notifyCount: 4,
+        },
       });
     },
   },

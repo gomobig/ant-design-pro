@@ -7,27 +7,9 @@ import SelectLang from '@/components/SelectLang';
 import styles from './UserLayout.less';
 import logo from '../assets/logo.svg';
 
-const links = [
-  {
-    key: 'help',
-    title: formatMessage({ id: 'layout.user.link.help' }),
-    href: '',
-  },
-  {
-    key: 'privacy',
-    title: formatMessage({ id: 'layout.user.link.privacy' }),
-    href: '',
-  },
-  {
-    key: 'terms',
-    title: formatMessage({ id: 'layout.user.link.terms' }),
-    href: '',
-  },
-];
-
 const copyright = (
   <Fragment>
-    Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品
+    Copyright <Icon type="copyright" /> 2018 {formatMessage({id: 'company.name'})}
   </Fragment>
 );
 
@@ -56,14 +38,13 @@ class UserLayout extends React.PureComponent {
             <div className={styles.header}>
               <Link to="/">
                 <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>Ant Design</span>
+                <span className={styles.title}>{formatMessage({id: 'project.name'})}</span>
               </Link>
             </div>
-            <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
           </div>
           {children}
         </div>
-        <GlobalFooter links={links} copyright={copyright} />
+        <GlobalFooter copyright={copyright} />
       </div>
     );
   }

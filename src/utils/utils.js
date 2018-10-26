@@ -141,51 +141,10 @@ const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-
 export function isUrl(path) {
   return reg.test(path);
 }
-/**
- * 设置localstorage
- * @param key 设置缓存键名
- * @param value 设置缓存值过期时间(小时)
- * */
-export function setStorage(key, value, Expires) {
-  const storage = window.localStorage;
-  if (!storage) {
-    alert('浏览器不支持localstorage');
-    return false;
-  } 
-    const now_time = new Date().getTime(); // 当前时间戳
-    const data_expires = Expires ? now_time + Expires * 60 * 60 * 1000 : ''; // 设置过期时间
-    storage.setItem(key, JSON.stringify({ result: value, expires: data_expires }));
-  
-}
-
-/**
- * 设置localstorage
- * @param key 获取缓存键名
- * */
-export function getStorage(key) {
-  const storage = window.localStorage;
-  if (!storage) {
-    alert('浏览器不支持localstorage');
-    return false;
-  } 
-    const result = JSON.parse(storage.getItem(key));
-    if (!result) {
-      // 缓存未设置
-      return null;
-    }
-    if (result.expires < Date.now() && result.expires !== '') {
-      // 时间过期 并且 设置了过期时间
-      return null;
-    } 
-      return result;
-    
-  
-}
 
 /**
  * 格式化数据为支持后端分页的格式
  */
-
 export function formatTableData(data) {
   const content = data.content.map(item => ({
       ...item,
