@@ -1,9 +1,7 @@
 import React, { PureComponent } from 'react';
-import { formatMessage } from 'umi/locale';
 import { Layout, message, Modal } from 'antd';
 import Animate from 'rc-animate';
 import { connect } from 'dva';
-import router from 'umi/router';
 import GlobalHeader from '@/components/GlobalHeader';
 import TopNavHeader from '@/components/TopNavHeader';
 import styles from './Header.less';
@@ -71,13 +69,12 @@ class HeaderView extends PureComponent {
     }
     const scrollTop = document.body.scrollTop + document.documentElement.scrollTop;
     if (!this.ticking) {
+      this.ticking = true;
       requestAnimationFrame(() => {
         if (this.oldScrollTop > scrollTop) {
           this.setState({
             visible: true,
           });
-          this.scrollTop = scrollTop;
-          return;
         }
         if (scrollTop > 300 && visible) {
           this.setState({
@@ -93,7 +90,6 @@ class HeaderView extends PureComponent {
         this.ticking = false;
       });
     }
-    this.ticking = false;
   };
 
   render() {
