@@ -39,7 +39,7 @@ export default class BaseMenu extends PureComponent {
   }
 
   /**
-   * Recursively flatten the data
+   * 递归获取所有的菜单path
    * [{path:string},{path:string}] => {path,path2}
    * @param  menus
    */
@@ -73,6 +73,8 @@ export default class BaseMenu extends PureComponent {
   };
 
   // Get the currently selected menu
+  // 通过pathname 解析出当前菜单
+  // urlToList 返回当前菜单每一个层级的name
   getSelectedMenuKeys = pathname =>
     urlToList(pathname).map(itemPath => getMenuMatches(this.flatMenuKeys, itemPath).pop());
 

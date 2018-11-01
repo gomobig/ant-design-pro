@@ -6,6 +6,7 @@ import LoginItem from './LoginItem';
 import LoginSubmit from './LoginSubmit';
 import styles from './index.less';
 import LoginContext from './loginContext';
+import PasswordChange from './PasswordChange';
 
 class Login extends Component {
   static propTypes = {
@@ -51,3 +52,4 @@ Object.keys(LoginItem).forEach(item => {
 });
 
 export default Form.create()(Login);
+export { PasswordChange };

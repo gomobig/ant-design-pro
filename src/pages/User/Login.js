@@ -4,7 +4,6 @@ import { formatMessage, FormattedMessage } from 'umi/locale';
 import { Alert } from 'antd';
 import Login from '@/components/Login';
 import styles from './Login.less';
-import { getStorage } from '../../utils/utils';
 
 const { UserName, Password, Submit, Role } = Login;
 

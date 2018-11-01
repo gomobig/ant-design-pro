@@ -3,20 +3,21 @@ import { FormattedMessage } from 'umi/locale';
 import { Spin, Menu, Icon, Dropdown } from 'antd';
 import NoticeIcon from '../NoticeIcon';
 import SelectLang from '../SelectLang';
+import { PasswordChange } from '@/components/Login';
 import styles from './index.less';
 
 export default class GlobalHeaderRight extends PureComponent {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       iconType: 'down',
-    }
+    };
   };
 
   handleMenuVisibleChange = visible => {
     this.setState({
       iconType: visible ? 'up' : 'down',
-    })
+    });
   };
 
   // 为了处理点击menu菜单 handleMenuVisibleChange不会调用的问题
@@ -35,6 +36,7 @@ export default class GlobalHeaderRight extends PureComponent {
       theme,
     } = this.props;
     const { iconType } = this.state;
+    const { showChangePassword, onChangePassword,onCancelPassword } = this.props;
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
         <Menu.Item key="changePassword">
@@ -70,6 +72,12 @@ export default class GlobalHeaderRight extends PureComponent {
           <Spin size="small" style={{ marginLeft: 8, marginRight: 8 }} />
         )}
         <SelectLang className={styles.action} />
+        <PasswordChange
+          userName={currentUser.name}
+          onSubmit={onChangePassword}
+          visible={showChangePassword}
+          onCancel={onCancelPassword}
+        />
       </div>
     );
   }

@@ -20,7 +20,10 @@ import Exception403 from '../pages/Exception/403';
 
 const { Content } = Layout;
 
-// Conversion router to menu.
+// 将路由转换成菜单 {item, name, icon, path, routes, component, authority}
+// 定义菜单名称 menu.${name} 或者 ${parentName}.${name}
+// 定义菜单权限 authority || parentAuthority,
+// 如果定义了routes 则递归子菜单
 function formatter(data, parentAuthority, parentName) {
   return data
     .map(item => {
@@ -52,6 +55,11 @@ function formatter(data, parentAuthority, parentName) {
     .filter(item => item);
 }
 
+/**
+ * memoizeOne 结果缓存库(只缓存一次结果)
+ * formatter 计算函数
+ * isEqual 比较计算结果函数
+ */
 const memoizeOneFormatter = memoizeOne(formatter, isEqual);
 
 const query = {

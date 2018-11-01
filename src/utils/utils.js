@@ -264,13 +264,6 @@ export function isStreamVaild(fileUrl) {
       resolve(true);
     }, 1000);
   });
-  // let xmlhttp = new XMLHttpRequest()
-  // xmlhttp.open('get', fileUrl, false);
-  // xmlhttp.send();
-  // if (xmlhttp.status === 404) {
-  //   return false
-  // }
-  // return true
 }
 
 export function inArray(v, data) {

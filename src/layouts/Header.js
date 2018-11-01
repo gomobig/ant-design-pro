@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Layout, message, Modal } from 'antd';
+import { Layout, message } from 'antd';
 import Animate from 'rc-animate';
 import { connect } from 'dva';
+import { formatMessage } from 'umi/locale';
 import GlobalHeader from '@/components/GlobalHeader';
 import TopNavHeader from '@/components/TopNavHeader';
 import styles from './Header.less';
@@ -45,12 +46,37 @@ class HeaderView extends PureComponent {
     message.success(`todo路由至指定页面`);
   };
 
+  // todo changePassword
+  changePassword = (prePassword, newPassword) => {
+    console.log('changePassword',prePassword, newPassword);
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'user/changePassword',
+      payload: {
+        userName: 'null',
+        prePassword,
+        newPassword,
+      },
+    }).then(({res}) => {
+      if (res) {
+        this.handleClosePassword();
+      } else {
+        message.error(formatMessage({id: 'password-change.rule.old-password.error'}))
+      }
+    })
+  };
+
+  handleClosePassword = () => {
+    this.setState({
+      showChangePassword: false,
+    })
+  };
+
   handleMenuClick = ({ key }) => {
     const { dispatch } = this.props;
     if (key === 'changePassword') {
-      Modal.info({
-        title: '准备修改密码',
-        content: `This is a test modal content.`,
+      this.setState({
+        showChangePassword: true,
       });
       return;
     }
@@ -95,7 +121,7 @@ class HeaderView extends PureComponent {
   render() {
     const { isMobile, handleMenuCollapse, setting } = this.props;
     const { navTheme, layout, fixedHeader } = setting;
-    const { visible } = this.state;
+    const { visible, showChangePassword } = this.state;
     const isTop = layout === 'topmenu';
     const width = this.getHeadWidth();
     const HeaderDom = visible ? (
@@ -108,6 +134,8 @@ class HeaderView extends PureComponent {
             onCollapse={handleMenuCollapse}
             onNoticeClick={this.handleNoticeClick}
             onMenuClick={this.handleMenuClick}
+            onChangePassword={this.changePassword}
+            showChangePassword={showChangePassword}
             {...this.props}
           />
         ) : (
@@ -115,6 +143,9 @@ class HeaderView extends PureComponent {
             onCollapse={handleMenuCollapse}
             onNoticeClick={this.handleNoticeClick}
             onMenuClick={this.handleMenuClick}
+            onChangePassword={this.changePassword}
+            showChangePassword={showChangePassword}
+            onCancelPassword={this.handleClosePassword}
             {...this.props}
           />
         )}

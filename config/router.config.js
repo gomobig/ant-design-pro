@@ -19,6 +19,13 @@ export default [
     routes: [
       // dashboard
       { path: '/', redirect: '/dashboard/analysis' },
+      // {
+      //   name: '人员查找',
+      //   icon: 'table',
+      //   path: '/person',
+      //   // authority: ['Monitor'],
+      //   component: './Person',
+      // },
       {
         path: '/dashboard',
         name: 'dashboard',
@@ -256,8 +263,13 @@ export default [
         ],
       },
       {
-        component: '404',
+        name: 'person-search',
+        icon: 'table',
+        path: '/search',
+        // authority: ['Monitor'],
+        component: './PersonSearch/PersonSearch',
       },
+
     ],
   },
 ];

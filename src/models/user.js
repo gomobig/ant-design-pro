@@ -1,5 +1,5 @@
 import { query as queryUsers, queryCurrent } from '@/services/user';
-import { getStorage } from '@/utils/utils';
+import { changePassword } from '@/services/wkapi';
 
 export default {
   namespace: 'user',
@@ -27,6 +27,9 @@ export default {
         },
       });
     },
+    *changePassword({ payload }, { call }) {
+      return yield call(changePassword, payload);
+    }
   },
 
   reducers: {

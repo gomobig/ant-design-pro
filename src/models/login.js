@@ -1,8 +1,6 @@
 import { routerRedux } from 'dva/router';
-import { parse, stringify } from 'qs';
 import { login, logout } from '@/services/wkapi';
 import { setAuthority } from '@/utils/authority';
-import { setStorage } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
 import jumpMap from '../../config/router.redirect';
 
