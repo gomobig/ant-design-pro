@@ -276,6 +276,7 @@ export function inArray(v, data) {
   return result;
 }
 
+<<<<<<< HEAD
 export function getByteLen(str) {
   let len = 0;
   let char = 0;
@@ -342,4 +343,9 @@ export function exitFullScreen() {
   if (typeof cfs !== 'undefined' && cfs) {
     cfs.call(el);
   }
+=======
+// 给官方演示站点用，用于关闭真实开发环境不需要使用的特性
+export function isAntdPro() {
+  return window.location.hostname === 'preview.pro.ant.design';
+>>>>>>> df47a9f788641cd7b100c35002ba522f6092b7ff
 }
