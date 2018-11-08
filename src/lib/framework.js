@@ -2,11 +2,12 @@
  * Created by fan on 16/2/19.
  */
 import request from 'superagent';
+import isPlainObject from 'lodash/isPlainObject';
 import frameworkConfig from '../config';
 import WebsocketClient from './WebsocketClient';
 
 const framework = {};
-const useWebsock = false;
+const useWebsocket = false;
 // module.exports = framework
 
 /**
@@ -24,24 +25,19 @@ framework.permission = {};
  * */
 framework.permission.logon = (userName, password, callback, verificationCode, extendsParams) => {
   const url = '/logon';
-
   const paramsIn = {
     userName,
     password,
   };
-
   if (verificationCode !== undefined) {
     paramsIn.verification_code = verificationCode;
   }
-
   if (extendsParams !== undefined) {
     paramsIn.extends = JSON.stringify(extendsParams);
   }
-
   const params = { params: JSON.stringify(paramsIn) };
 
   framework.internal.sendPost(url, params, callback);
-
   // 登录后,清理ws连接
   framework.internal.resetConn();
 };
@@ -50,9 +46,9 @@ framework.permission.logon = (userName, password, callback, verificationCode, ex
  * 登出
  * @param {function} callback 回调函数
  * */
-framework.permission.logout = function(callback) {
+framework.permission.logout = callback => {
   const url = '/logout';
-  framework.internal.sendDelete(url, {}, callback);
+  framework.internal.sendDelete(url, '', callback);
 
   // 退出登录后,清理ws连接
   framework.internal.resetConn();
@@ -62,32 +58,23 @@ framework.permission.logout = function(callback) {
  * 远程service访问对象
  * */
 framework.service = {};
-
 /**
  * 发起请求
  * serviceRequest.request1('myService', 'myFunc', param1, param2, param3, ...);
- * @param {string} serviceName 服务名
- * @param {string} funcName 方法名
- * */
-framework.service.request = function(serviceName, funcName) {
-  const argsCount = arguments.length;
-  if (argsCount < 2) {
+ * @param serviceName 服务名
+ * @param funcName 方法名
+ * @param params 其他参数 没有多余参数时，info为[]
+ */
+framework.service.request = (serviceName, funcName, ...params) => {
+  if (!serviceName || !funcName) {
     throw new Error('call request with wrong params.');
   }
   let callback;
   const url = `/service/${serviceName}/${funcName}`;
-  const params = [];
-  for (let i = 2; i < argsCount; i++) {
-    const arg = arguments[i];
-    if (i === argsCount - 1 && typeof arg === 'function') {
-      callback = arg;
-    } else {
-      params.push(arg);
-    }
+  if (!!params && typeof params[params.length - 1] === 'function') {
+    callback = params.pop();
   }
-
   const data = { params: JSON.stringify(params) };
-
   framework.internal.callService(url, serviceName, funcName, data, callback);
 };
 
@@ -99,20 +86,19 @@ framework.service.request = function(serviceName, funcName) {
  * @param {json} funcParams 远程服务方法Map形式参数
  * @param {function} callback 回调函数
  * */
-framework.service.request2 = function(serviceName, funcName, funcParams, callback) {
-  const argsCount = arguments.length;
-  if (argsCount < 2) {
+framework.service.request2 = (serviceName, funcName, funcParams, callback) => {
+  if (!serviceName || !funcName) {
     throw new Error('call request with wrong params.');
   }
   const url = `/service/${serviceName}/${funcName}`;
   let params = '';
-  if (typeof funcParams === 'object') {
-    for (const key in funcParams) {
+  if (isPlainObject(funcParams)) {
+    Object.keys(funcParams).forEach(key => {
       if (params !== '') {
         params += '&';
       }
       params += `${key}=${JSON.stringify(funcParams[key])}`;
-    }
+    });
   }
   framework.internal.sendPost(url, params, callback);
 };
@@ -130,9 +116,8 @@ framework.restfulservice = {};
  * @param {json} funcParams 远程服务方法Map形式参数
  * @param {function} callback 回调函数
  * */
-framework.restfulservice.requestGet = function(serviceName, funcName, funcParams, callback) {
-  const argsCount = arguments.length;
-  if (argsCount < 2) {
+framework.restfulservice.requestGet = (serviceName, funcName, funcParams, callback) => {
+  if (!serviceName || !funcName) {
     throw new Error('call request with wrong params.');
   }
   const url = `/restfulservice/${serviceName}/${funcName}`;
@@ -147,9 +132,8 @@ framework.restfulservice.requestGet = function(serviceName, funcName, funcParams
  * @param {json} funcParams 远程服务方法Map形式参数
  * @param {function} callback 回调函数
  * */
-framework.restfulservice.requestPost = function(serviceName, funcName, funcParams, callback) {
-  const argsCount = arguments.length;
-  if (argsCount < 2) {
+framework.restfulservice.requestPost = (serviceName, funcName, funcParams, callback) => {
+  if (!serviceName || !funcName) {
     throw new Error('call request with wrong params.');
   }
   const url = `/restfulservice/${serviceName}/${funcName}`;
@@ -164,9 +148,8 @@ framework.restfulservice.requestPost = function(serviceName, funcName, funcParam
  * @param {json} funcParams 远程服务方法Map形式参数
  * @param {function} callback 回调函数
  * */
-framework.restfulservice.requestPut = function(serviceName, funcName, funcParams, callback) {
-  const argsCount = arguments.length;
-  if (argsCount < 2) {
+framework.restfulservice.requestPut = (serviceName, funcName, funcParams, callback) => {
+  if (!serviceName || !funcName) {
     throw new Error('call request with wrong params.');
   }
   const url = `/restfulservice/${serviceName}/${funcName}`;
@@ -181,25 +164,24 @@ framework.restfulservice.requestPut = function(serviceName, funcName, funcParams
  * @param {json} funcParams 远程服务方法Map形式参数
  * @param {function} callback 回调函数
  * */
-framework.restfulservice.requestDelete = function(serviceName, funcName, funcParams, callback) {
-  const argsCount = arguments.length;
-  if (argsCount < 2) {
+framework.restfulservice.requestDelete = (serviceName, funcName, funcParams, callback) => {
+  if (!serviceName || !funcName) {
     throw new Error('call request with wrong params.');
   }
   let url = `/restfulservice/${serviceName}/${funcName}`;
   let params = '';
-  if (typeof funcParams === 'object') {
-    for (const key in funcParams) {
+  if (isPlainObject(funcParams)) {
+    Object.keys(funcParams).forEach(key => {
       if (params !== '') {
         params += '&';
       }
       params += `${key}=${funcParams[key]}`;
-    }
+    });
   }
   if (params !== '') {
     url = `${url}?${params}`;
   }
-  framework.internal.sendDelete(url, {}, callback);
+  framework.internal.sendDelete(url, '', callback);
 };
 
 /**
@@ -212,31 +194,22 @@ framework.file = {};
  * @param {string} serviceName 远程服务名
  * @param {string} funcName 远程服务方法名
  * @param fileName
+ * @param params
  * */
-framework.file.download = function(serviceName, funcName, fileName) {
-  const argsCount = arguments.length;
-  if (argsCount < 3) {
+framework.file.download = (serviceName, funcName, fileName, ...params) => {
+  if (!fileName || !funcName || !serviceName) {
     throw new Error('call download with wrong params.');
   }
   let callback;
   let url = framework.internal.getFullUrl(`/download/${serviceName}/${funcName}`);
-  const params = [];
-  for (let i = 3; i < argsCount; i++) {
-    const arg = arguments[i];
-    if (i === argsCount - 1 && typeof arg === 'function') {
-      callback = arg;
-    } else {
-      params.push(arg);
-    }
+  if (!!params && typeof params[params.length - 1] === 'function') {
+    callback = params.pop();
   }
-
   url += `?params=${JSON.stringify(params)}&fileName=${fileName}`;
-
   const iframe = document.createElement('iframe');
   iframe.src = url;
   iframe.style.display = 'none';
   document.body.appendChild(iframe);
-
   if (typeof callback === 'function') {
     callback(0, 'download start succeed');
   }
@@ -247,22 +220,16 @@ framework.file.download = function(serviceName, funcName, fileName) {
  * @param {string} serviceName 远程服务名
  * @param {string} funcName 远程服务方法名
  * @param {string} fileName
+ * @param params
  * */
-framework.file.downloadUrl = function(serviceName, funcName, fileName) {
-  const argsCount = arguments.length;
-  if (argsCount < 3) {
+framework.file.downloadUrl = (serviceName, funcName, fileName, ...params) => {
+  if (!fileName || !funcName || !serviceName) {
     throw new Error('call download with wrong params.');
   }
   let url = framework.internal.getFullUrl(`/download/${serviceName}/${funcName}`);
-  const params = [];
-  for (let i = 3; i < argsCount; i++) {
-    const arg = arguments[i];
-    if (i === argsCount - 1 && typeof arg === 'function') {
-    } else {
-      params.push(arg);
-    }
+  if (!!params && typeof params[params.length - 1] === 'function') {
+    params.pop();
   }
-  // url += `?params=${JSON.stringify(params)}&fileName=${fileName}&_=${new Date().getTime()}`
   url += `?params=${JSON.stringify(params)}&fileName=${fileName}`;
   return encodeURI(url);
 };
@@ -274,26 +241,19 @@ framework.file.downloadUrl = function(serviceName, funcName, fileName) {
  * @param {object} entity
  * @param {string} serviceName 远程服务名
  * @param {string} funcName 远程服务方法名
+ * @param params
  * */
-framework.file.export = function(fileName, type, entity, serviceName, funcName) {
-  const argsCount = arguments.length;
-  if (argsCount < 5) {
+framework.file.export = (fileName, type, entity, serviceName, funcName, ...params) => {
+  if (!funcName || !serviceName || !entity || !type || !fileName) {
     throw new Error('call export with wrong params.');
   }
   const url = framework.internal.getFullUrl(`/export/${serviceName}/${funcName}`);
-  const params = [];
-  for (let i = 5; i < argsCount; i++) {
-    const arg = arguments[i];
-    params.push(arg);
-  }
-
   const requestParams = {
     args: JSON.stringify(params),
     fileName,
     type,
     entity: JSON.stringify(entity),
   };
-
   const frameName = `downloadFrame_${Math.floor(Math.random() * 1000)}`;
   const iframe = document.createElement('iframe');
   iframe.name = frameName;
@@ -321,59 +281,54 @@ framework.file.export = function(fileName, type, entity, serviceName, funcName) 
  * 获取文件下载的路径
  * @param serviceName
  * @param funcName
+ * @param args
  */
-framework.file.uploadUrl = function(serviceName, funcName, args) {
-  return (
-    framework.internal.getFullUrl(`/upload/${serviceName}/${funcName}?params=`) +
-    framework.file.uploadParams(args)
-  );
-};
+framework.file.uploadUrl = (serviceName, funcName, args) =>
+  framework.internal.getFullUrl(`/upload/${serviceName}/${funcName}?params=`) +
+  framework.file.uploadParams(args);
 
 /**
  * 服务参数调用的地址
  * @param args
  */
-framework.file.uploadParams = function(args) {
-  if (args === null || args.length === 0) {
+framework.file.uploadParams = args => {
+  if (!args) {
     return '';
   }
-
   const argStr = JSON.stringify(args);
   if (argStr.indexOf('%') > 0) {
     throw new Error('参数不能包含非法字符');
   }
-
   return encodeURIComponent(argStr);
 };
 
 /**
  * 文件上传回调
- * @param data
+ * @param  data
  * @param callback
  */
-framework.file.uploadCallback = function(data, callback) {
-  if (data === undefined || data === null || data === '') {
+framework.file.uploadCallback = (data, callback) => {
+  let result = '';
+  if (!data) {
     if (typeof callback === 'function') {
-      callback(-1, 'server error');
+      result = callback(-1, 'server error');
     }
-    return;
+    return result;
   }
-
   if (typeof callback !== 'function') {
-    return;
+    return result;
   }
-
-  if (data && typeof data === 'string') {
-    data = JSON.parse(data);
+  let newData = data;
+  if (newData && typeof newData === 'string') {
+    newData = JSON.parse(newData);
   }
-
   let errCode = 0;
-  if (data && data.errorCode !== null && data.errorCode !== undefined) {
-    errCode = data.errorCode;
+  if (newData && newData.errorCode) {
+    errCode = newData.errorCode;
   }
 
   let errMsg = '';
-  if (data && data.errorMsg !== null && data.errorMsg !== undefined) {
+  if (data && data.errorMsg) {
     errMsg = data.errorMsg;
   }
 
@@ -385,8 +340,8 @@ framework.file.uploadCallback = function(data, callback) {
       resultData = data.data;
     }
   }
-
-  return callback(errCode, errMsg, resultData);
+  result = callback(errCode, errMsg, resultData);
+  return result;
 };
 
 /**
@@ -453,8 +408,8 @@ framework.internal.defaultErrorHandler = {
 };
 
 // 转换json为key/value格式
-framework.internal.toQueryString = function(obj) {
-  return obj
+framework.internal.toQueryString = obj =>
+  obj
     ? Object.keys(obj)
         .sort()
         .map(key => {
@@ -470,21 +425,21 @@ framework.internal.toQueryString = function(obj) {
         })
         .join('&')
     : '';
-};
 
-framework.internal.request = function(url, method, data, callback) {
+framework.internal.request = (url, method, data, callback) => {
   let bodyData = data;
+  let requestUrl = url;
   if (data !== null) {
     if (method === 'GET' || method === 'PUT' || method === 'DELETE') {
       const str = framework.internal.toQueryString(data);
       if (str.length > 0) {
-        url = `${url}?${framework.internal.toQueryString(data)}`;
+        requestUrl = `${url}?${framework.internal.toQueryString(data)}`;
       }
       bodyData = null;
     }
   }
 
-  request(method, url)
+  request(method, requestUrl)
     .timeout(frameworkConfig.timeout === null ? 30000 : frameworkConfig.timeout)
     .withCredentials()
     .set('Accept', 'text/plain;')
@@ -517,7 +472,7 @@ framework.internal.request = function(url, method, data, callback) {
       // 正常处理
       let errorCode = 200;
       try {
-        const code = parseInt(res.xhr.getResponseHeader('error_code'));
+        const code = parseInt(res.xhr.getResponseHeader('error_code'), 10);
         if (`${code}` !== 'NaN') {
           errorCode = code;
         }
@@ -541,11 +496,11 @@ framework.internal.request = function(url, method, data, callback) {
 
         let totalCount;
         if (typeof rawData.totalCount === 'number') {
-          totalCount = rawData.totalCount;
+          ({ totalCount } = rawData);
         }
         let pageCount;
         if (typeof rawData.pageCount === 'number') {
-          pageCount = rawData.pageCount;
+          ({ pageCount } = rawData.pageCount);
         }
 
         let resultData;
@@ -565,12 +520,8 @@ framework.internal.request = function(url, method, data, callback) {
     });
 };
 
-framework.internal.getFullUrl = function(url) {
-  if (
-    frameworkConfig === null ||
-    frameworkConfig.domain === null ||
-    frameworkConfig.project === null
-  ) {
+framework.internal.getFullUrl = url => {
+  if (!frameworkConfig || !frameworkConfig.domain || !frameworkConfig.project) {
     throw new Error('no frameworkConfig found.');
   }
   return `${frameworkConfig.domain}/${frameworkConfig.project}${url}`;
@@ -580,7 +531,7 @@ framework.internal.getFullUrl = function(url) {
 framework.internal.ws = null;
 
 // ws service
-framework.internal.wsServiceCallback = function(headerErrorCode, errCode, errMsg, result) {
+framework.internal.wsServiceCallback = (headerErrorCode, errCode, errMsg, result) => {
   const errorCode = headerErrorCode;
   if (errorCode === 200) {
     if (typeof this.callback === 'function') {
@@ -596,8 +547,8 @@ framework.internal.wsServiceCallback = function(headerErrorCode, errCode, errMsg
 };
 
 // 重置service请求的连接
-framework.internal.resetConn = function() {
-  if (!useWebsock) return;
+framework.internal.resetConn = () => {
+  if (!useWebsocket) return;
   if (framework.internal.ws !== null) {
     framework.internal.ws.disconnect();
     framework.internal.ws = null;
@@ -605,7 +556,7 @@ framework.internal.resetConn = function() {
 };
 
 // 处理全局的错误处理异常
-framework.internal.errorHandler = function(errorCode, callback) {
+framework.internal.errorHandler = (errorCode, callback) => {
   if (errorCode === WebsocketClient.prototype.SERVICE_CALL_ERROR_CODE_CLOSE) {
     // 如果是主动ws主动关闭连接,则不算是错误
   } else if (errorCode === WebsocketClient.prototype.SERVICE_CALL_ERROR_CODE_NETWORK) {
@@ -805,20 +756,19 @@ framework.internal.errorHandler = function(errorCode, callback) {
 };
 
 // service 请求
-framework.internal.callService = function(url, service, func, data, callback) {
+framework.internal.callService = (url, service, func, data, callback) => {
   // 判断当前的配置使用 什么协议来访问service
   // 如果使用http协议
   if (frameworkConfig.serviceCallProtocol === 'http') {
     framework.internal.sendPost(url, data, callback);
     return;
   }
-
-  if (!useWebsock) return;
+  if (!useWebsocket) return;
 
   // 如果是自动选择,则判断是否可以使用ws
   // 如果不可以使用ws,则默认都使用http
   if (frameworkConfig.serviceCallProtocol === '' || frameworkConfig.serviceCallProtocol === 'ws') {
-    let ws = framework.internal.ws;
+    let { ws } = framework.internal;
     if (ws !== null && ws.isConnected()) {
       framework.internal.ws.callService(
         service,
@@ -846,11 +796,13 @@ framework.internal.callService = function(url, service, func, data, callback) {
         WebsocketClient.prototype.SERVICE_CALL_ERROR_CODE_NETWORK
       );
     });
-    ws.setOnConnect(function() {
-      const call = function(headerErrorCode, errCode, errMsg, result) {
+    ws.setOnConnect(() => {
+      const call = (headerErrorCode, errCode, errMsg, result) => {
         try {
           callback(headerErrorCode, errCode, errMsg, result);
-        } catch (e) {}
+        } catch (e) {
+          console.error(e);
+        }
         if (framework.internal.ws !== ws) {
           setTimeout(() => {
             ws.disconnect();
@@ -865,18 +817,15 @@ framework.internal.callService = function(url, service, func, data, callback) {
         frameworkConfig.timeout
       );
     });
-
     if (!ws.connect('public')) {
       framework.internal.ws = null;
       frameworkConfig.serviceCallProtocol = 'http'; // 当前客户端无法使用ws,切换到http模式
       framework.internal.sendPost(url, data, callback);
       return;
     }
-
     if (framework.internal.ws === null) {
       framework.internal.ws = ws;
     }
-
     frameworkConfig.serviceCallProtocol = 'ws';
     return;
   }
@@ -887,10 +836,10 @@ framework.internal.callService = function(url, service, func, data, callback) {
 /**
  * 发起GET请求
  * @param url
- * @param {string} params 查询参数
+ * @param {json} params 查询参数
  * @param callback
  * */
-framework.internal.sendGet = function(url, params, callback) {
+framework.internal.sendGet = (url, params, callback) => {
   const fullUrl = framework.internal.getFullUrl(url);
   framework.internal.request(fullUrl, 'GET', params, callback);
 };
@@ -898,10 +847,10 @@ framework.internal.sendGet = function(url, params, callback) {
 /**
  * 发起POST请求
  * @param url
- * @param {string} data 要post的数据
+ * @param data 要post的数据
  * @param callback
  * */
-framework.internal.sendPost = function(url, data, callback) {
+framework.internal.sendPost = (url, data, callback) => {
   const fullUrl = framework.internal.getFullUrl(url);
   framework.internal.request(fullUrl, 'POST', data, callback);
 };
@@ -912,7 +861,7 @@ framework.internal.sendPost = function(url, data, callback) {
  * @param params
  * @param callback
  * */
-framework.internal.sendPut = function(url, params, callback) {
+framework.internal.sendPut = (url, params, callback) => {
   const fullUrl = framework.internal.getFullUrl(url);
   framework.internal.request(fullUrl, 'PUT', params, callback);
 };
@@ -923,7 +872,7 @@ framework.internal.sendPut = function(url, params, callback) {
  * @param {string} params 查询参数
  * @param callback
  * */
-framework.internal.sendDelete = function(url, params, callback) {
+framework.internal.sendDelete = (url, params, callback) => {
   const fullUrl = framework.internal.getFullUrl(url);
   framework.internal.request(fullUrl, 'DELETE', params, callback);
 };

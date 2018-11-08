@@ -25,6 +25,7 @@ module.exports = {
     'jsx-a11y/no-static-element-interactions': 0,
     'jsx-a11y/anchor-is-valid': 0,
     'linebreak-style': 0,
+    'no-console': ['error', { allow: ['warn', 'error'] }],
   },
   settings: {
     polyfills: ['fetch', 'promises', 'url'],
