@@ -304,7 +304,10 @@ framework.file.uploadParams = args => {
 
 /**
  * 文件上传回调
- * @param  data
+ * @param {Object} data
+ * @param {number} data.errorCode
+ * @param {string} data.errorMsg
+ * @param {string} data.data
  * @param callback
  */
 framework.file.uploadCallback = (data, callback) => {
@@ -333,7 +336,7 @@ framework.file.uploadCallback = (data, callback) => {
   }
 
   let resultData = '';
-  if (data !== undefined && data.data !== undefined) {
+  if (data && data.data) {
     try {
       resultData = JSON.parse(data.data);
     } catch (e) {
