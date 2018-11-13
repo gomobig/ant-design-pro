@@ -3,8 +3,8 @@
  */
 import request from 'superagent';
 import isPlainObject from 'lodash/isPlainObject';
-import frameworkConfig from '../config';
-import WebsocketClient from './WebsocketClient';
+import frameworkConfig from './config';
+import WebsocketClient from './WebsocketClientWebWork';
 
 const framework = {};
 const useWebsocket = false;
@@ -560,9 +560,9 @@ framework.internal.resetConn = () => {
 
 // 处理全局的错误处理异常
 framework.internal.errorHandler = (errorCode, callback) => {
-  if (errorCode === WebsocketClient.prototype.SERVICE_CALL_ERROR_CODE_CLOSE) {
+  if (errorCode === WebsocketClient.SERVICE_CALL_ERROR_CODE_CLOSE) {
     // 如果是主动ws主动关闭连接,则不算是错误
-  } else if (errorCode === WebsocketClient.prototype.SERVICE_CALL_ERROR_CODE_NETWORK) {
+  } else if (errorCode === WebsocketClient.SERVICE_CALL_ERROR_CODE_NETWORK) {
     // 如果是连接异常
     framework.internal.resetConn();
     if (
@@ -574,7 +574,7 @@ framework.internal.errorHandler = (errorCode, callback) => {
     } else {
       framework.internal.defaultErrorHandler.networkErrorHandler();
     }
-  } else if (errorCode === WebsocketClient.prototype.SERVICE_CALL_ERROR_CODE_TIMEOUT) {
+  } else if (errorCode === WebsocketClient.SERVICE_CALL_ERROR_CODE_TIMEOUT) {
     // 如果是超时
     if (
       frameworkConfig &&
@@ -796,7 +796,7 @@ framework.internal.callService = (url, service, func, data, callback) => {
       // 处理如果连接失败的情况
       framework.internal.wsServiceCallback.call(
         { callback },
-        WebsocketClient.prototype.SERVICE_CALL_ERROR_CODE_NETWORK
+        WebsocketClient.SERVICE_CALL_ERROR_CODE_NETWORK
       );
     });
     ws.setOnConnect(() => {

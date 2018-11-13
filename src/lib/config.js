@@ -1,4 +1,4 @@
-import '../public/remote';
+import '../../public/remote';
 
 let httpUrl = '';
 let wsUrl = '';

@@ -3,10 +3,10 @@ export default {
   'layout.user.link.help': 'Help',
   'layout.user.link.privacy': 'Privacy',
   'layout.user.link.terms': 'Terms',
-  'password': 'password',
-  'account': 'account',
-  'upload': 'Upload',
-  'search': 'Search',
+  password: 'password',
+  account: 'account',
+  upload: 'Upload',
+  search: 'Search',
   'company.name': '221 data service',
   'project.name': 'Intelligent Security',
   'login.role': 'role',
@@ -16,7 +16,7 @@ export default {
   'user.role.system-admin': 'System',
   'user.role.user-admin': 'UserManager',
   'user.role.monitor': 'Monitor',
-  'menu': 'menu',
+  menu: 'menu',
   'password-change.label.account': 'Account',
   'password-change.label.old': 'Original Password',
   'password-change.label.new': 'Password',
@@ -26,7 +26,8 @@ export default {
   'password-change.rule.old-password.require': 'Please input your original password!',
   'password-change.rule.new-password.require': 'Please input your new password!',
   'password-change.rule.confirm.require': 'Please confirm your password!',
-  'password-change.rule.confirm.error': 'Password at least 6 characters support english and numbers!',
+  'password-change.rule.confirm.error':
+    'Password at least 6 characters support english and numbers!',
   'password-change.rule.old-password.error': 'Original password is incorrect!',
   'password-change.rule.old-new-same.error': 'Old and new passwords cannot be the same!',
   'label.time': 'Range',
@@ -151,13 +152,9 @@ export default {
   'menu.account.settings': 'Account Settings',
   'menu.account.trigger': 'Trigger Error',
   'menu.account.logout': 'Logout',
-<<<<<<< HEAD
   'menu.person-search': 'Find People',
 
-  'app.login.message-invalid-credentials': 'Invalid username or password（admin/888888）',
-=======
   'app.login.message-invalid-credentials': 'Invalid username or password（admin/ant.design）',
->>>>>>> df47a9f788641cd7b100c35002ba522f6092b7ff
   'app.login.message-invalid-verification-code': 'Invalid verification code',
   'app.login.tab-login-credentials': 'Credentials',
   'app.login.tab-login-mobile': 'Mobile number',
