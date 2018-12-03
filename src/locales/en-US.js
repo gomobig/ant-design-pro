@@ -50,6 +50,8 @@ export default {
   'search.select.glasses.placeholder': 'Glasses',
   'search.error.name': 'Please input name or upload avatar ',
 
+  'message.search.no-similar-person': 'No similar person',
+
   'menu.account.change-password': 'Change Password',
   'validation.email.required': 'Please enter your email!',
   'validation.email.wrong-format': 'The email address is in the wrong format!',

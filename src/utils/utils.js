@@ -148,3 +148,9 @@ export function isUrl(path) {
 export function isAntdPro() {
   return window.location.hostname === 'preview.pro.ant.design';
 }
+
+// 221data utils after
+
+export function delay(ms) {
+  return new Promise(resolve => setTimeout(() => resolve(true), ms));
+}

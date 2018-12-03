@@ -25,7 +25,6 @@ if (!globalDomain) {
 } else {
   httpUrl = globalDomain;
   wsUrl = globalWsdomain;
-  // console.log('globalDomain122222222222222', globalDomain)
   const hostRes = httpUrl.match(/(\w+):\/\/([^/:]+)(:\d*)?/);
   if (hostRes[2]) {
     hostUrl = `${hostRes[2]}`;

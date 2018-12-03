@@ -3,10 +3,10 @@ export default {
   'layout.user.link.help': '帮助',
   'layout.user.link.privacy': '隐私',
   'layout.user.link.terms': '条款',
-  'password': '密码',
-  'account': '账号',
-  'upload': '上传',
-  'search': '查询',
+  password: '密码',
+  account: '账号',
+  upload: '上传',
+  search: '查询',
   'company.name': '221数据有限公司',
   'project.name': '智慧安防',
   'login.role': '身份',
@@ -16,7 +16,7 @@ export default {
   'user.role.system-admin': '系统管理员',
   'user.role.user-admin': '用户管理员',
   'user.role.monitor': '监控员',
-  'menu': '菜单',
+  menu: '菜单',
   'password-change.label.account': '用户名',
   'password-change.label.old': '原始密码',
   'password-change.label.new': '新密码',
@@ -48,6 +48,8 @@ export default {
   'search.select.gender.placeholder': '性别',
   'search.select.glasses.placeholder': '眼镜',
   'search.error.name': '请输入姓名或上传头像',
+
+  'message.search.no-similar-person': '暂无相似人员数据',
 
   'validation.email.required': '请输入邮箱地址！',
   'validation.email.wrong-format': '邮箱地址格式错误！',
@@ -150,7 +152,6 @@ export default {
   'menu.account.logout': '退出登录',
   'menu.account.change-password': '修改密码',
   'menu.person-search': '人员查找',
-
 
   'app.login.message-invalid-credentials': '账户或密码错误（admin/888888）',
   'app.login.message-invalid-verification-code': '验证码错误',
